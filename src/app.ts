@@ -1,7 +1,11 @@
-import http = require('http');
+import express = require('express');
 
 import routes = require('./routes');
 
-const app = http.createServer(routes.handler);
+const app = express();
+
+app.set('view engine', 'ejs');
+
+routes.handler(app);
 
 export default app;

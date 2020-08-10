@@ -1,8 +1,6 @@
-import ejs = require('ejs');
-import fs = require('fs');
+import express = require('express');
 import path = require('path');
-import mimetypes = require('mime-types');
-import { IncomingMessage, ServerResponse } from 'http';
+import { Express, Request, Response } from 'express';
 
 import home = require('./home');
 
@@ -15,49 +13,60 @@ export const BASE_FILES = {
     'footer': FOOTER
 };
 
-export function handler(req: IncomingMessage, res: ServerResponse) {
-    const route = (req.url === undefined) ? '/' : req.url;
-    if (route === '/') {
-        home.get(req, res);
-    } else {
-        fs.readFile(path.join(PUBLIC, route), (err, content) => {
-            if (!err) {
-                getPublic(path.join(PUBLIC, route), content, res);
-            } else {
-                getNotFound(res);
-            }
-        });
-    }
+export function handler(app: Express) {
+    app.get('/', home.get);
+
+    app.get('/404', (req, res, next) => {
+        next();
+    });
+
+    app.get('/403', (req, res, next) => {
+        const err = new Error('not allowed!');
+        const status = {status: 403};
+
+        next({...err, ...status});
+    });
+
+    app.get('/500', (req, res, next) => {
+        next(new Error('internal error'));
+    });
+
+    app.use(express.static(PUBLIC));
+    
+    app.use(getNotFound);
+    
+    app.use(getInternalError);
 }
 
-function getPublic(route: string, content: Buffer, res: ServerResponse) {
-    let fileType = mimetypes.lookup(route);
+function getNotFound(req: Request, res: Response) {
+    res.status(404);
 
-    fileType = (!fileType) ? 'text/plain' : fileType;
-
-    res.writeHead(200, {'Content-Type': fileType});
-    res.write(content);
-    res.end();
-}
-
-function getNotFound(res: ServerResponse) {
-    fs.readFile(path.join(VIEWS, "404.ejs"), (err, content) => {
-        if (!err) {
-            const html = ejs.render(content.toString(), 
-                {'title': '404 Page Not Found', 'basefiles': BASE_FILES});
-
-            res.writeHead(404, {'Content-Type': 'text/html'});
-            res.write(html);
-            res.end();
-        } else {
-            getInternalError(res, err);
+    res.format({
+        html: () => {
+            res.render(path.join(VIEWS, '404.ejs'), 
+                { title: "404 Not Found", url: req.url, basefiles: BASE_FILES});
+        },
+        json: () => {
+            res.json({ error: '404 Not Found' });
+        },
+        default: () => {
+            res.type('txt').send('404 Not Found');
         }
     });
 }
 
-export function getInternalError(res: ServerResponse, err: NodeJS.ErrnoException) {
-    res.writeHead(500, {'Content-Type': 'text/plain'});
-    res.write(`500: ${err.message}.`);
-    res.end();
+function getInternalError(err: any, res: Response) {
+    res.status(err.status || 500);
+    
+    switch (res.statusCode) {
+        case 403:
+            res.type('txt').send('not allowed!');
+            break;
+        default:
+            const timestamp = new Date();
+            console.log(`${timestamp} ${err.name}:\n ${err.message}`);
+            res.type('txt').send('internal error');
+            break;
+    }
 }
 

@@ -1,6 +1,6 @@
 import express = require('express');
 import path = require('path');
-import { Express, Request, Response } from 'express';
+import { Router, Request, Response } from 'express';
 
 import home = require('./home');
 
@@ -13,29 +13,33 @@ export const BASE_FILES = {
     'footer': FOOTER
 };
 
-export function handler(app: Express) {
-    app.get('/', home.get);
+export function router(): Router {
+    const router = Router();
 
-    app.get('/404', (req, res, next) => {
+    router.get('/', home.get);
+
+    router.get('/404', (req, res, next) => {
         next();
     });
 
-    app.get('/403', (req, res, next) => {
+    router.get('/403', (req, res, next) => {
         const err = new Error('not allowed!');
         const status = {status: 403};
 
         next({...err, ...status});
     });
 
-    app.get('/500', (req, res, next) => {
+    router.get('/500', (req, res, next) => {
         next(new Error('internal error'));
     });
 
-    app.use(express.static(PUBLIC));
+    router.use(express.static(PUBLIC));
     
-    app.use(getNotFound);
+    router.use(getNotFound);
     
-    app.use(getInternalError);
+    router.use(getInternalError);
+
+    return router;
 }
 
 function getNotFound(req: Request, res: Response) {

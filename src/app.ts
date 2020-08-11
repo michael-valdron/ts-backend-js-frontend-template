@@ -6,6 +6,6 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-routes.handler(app);
+app.use('/', routes.router());
 
 export default app;

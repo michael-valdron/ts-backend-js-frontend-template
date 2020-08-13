@@ -6,6 +6,8 @@ Personal template for creating TypeScript web application in NodeJS.
 ## Frontend
 ### Code Dependencies
 - `"jquery"`
+- `"bootstrap"`
+- `"popper.js"`
 
 ### Build Dependencies
 - `"@babel/core"`

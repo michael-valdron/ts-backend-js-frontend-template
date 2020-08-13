@@ -1,0 +1,19 @@
+version: '2'
+services:
+    web:
+        build: .
+        command: npm run start:dev # Dev Start (For watching source changes)
+        # command: npm run start # Prod Start
+        volumes:
+            - .:/usr/app # Dev (For watching source changes)
+            # - /usr/app # Prod
+            - /usr/app/node_modules
+        ports:
+            # Dev Ports 
+            - '3000:3000'
+            # Prod Ports
+            # - '80:80'
+            # - '443:443'
+        # environment: 
+        #     PORT: 80
+        #     PORT: 443

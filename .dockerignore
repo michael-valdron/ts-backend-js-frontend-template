@@ -1,0 +1,8 @@
+# Local node modules
+node_modules/
+
+# GiHub only files
+.github
+
+# Local transcompiled web app
+dist/

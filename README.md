@@ -14,9 +14,7 @@ Personal template for creating TypeScript web application in NodeJS.
 - `"@babel/preset-env"`
 - `"babel-loader"`
 - `"css-loader"`
-- `"extract-text-webpack-plugin"`
 - `"file-loader"`
-- `"monaco-editor-webpack-plugin"`
 - `"onchange"`
 - `"style-loader"`
 - `"webpack"`

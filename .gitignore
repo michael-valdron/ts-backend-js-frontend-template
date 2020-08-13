@@ -106,3 +106,6 @@ dist
 
 # package-lock file
 package-lock.json
+
+# transcompiled public source
+/**/public/build/

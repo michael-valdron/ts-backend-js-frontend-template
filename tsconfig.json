@@ -68,11 +68,11 @@
     "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
   },
   "include": [
-    "src/**/*.ts",
-    "src/**/*.js"
+    "src/srv/**/*.ts",
+    "src/srv/**/*.js"
   ], /* include backend src files. */
   "exclude": [
-    "src/public/",
-    "src/views/"
+    "src/srv/public/",
+    "src/srv/views/"
   ] /* exclude static files and template files. */
 }

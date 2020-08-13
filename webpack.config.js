@@ -1,15 +1,17 @@
-const webpack = require('webpack');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const path = require('path');
 
 const outputPath = path.resolve(__dirname, 'src/srv/public/build');
 
 module.exports = {
-  entry: './src/client/index.js',
+  entry: {
+    main: './src/client/index.js'
+  },
   output: {
     path: outputPath,
     publicPath: './build/',
-    filename: 'bundle.js'
+    filename: '[name].bundle.js',
+    chunkFilename: '[name].bundle.js'
   },
   module: {
     // Only assumes JS modules with possible DOM source.
@@ -21,10 +23,12 @@ module.exports = {
       use: ['file-loader?name=[hash].[ext]']
     }]
   },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    },
+  },
   plugins: [
-    new ManifestPlugin(),
-    new webpack.optimize.LimitChunkCountPlugin({
-      maxChunks: 1,
-    }),
+    new ManifestPlugin()
   ]
 };

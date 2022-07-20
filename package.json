@@ -16,7 +16,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
     "ejs": "^3.1.3",
